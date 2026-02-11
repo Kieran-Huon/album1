@@ -1,25 +1,128 @@
 :root{
-  --bg:#0b1220; --card:#101a33; --text:#eaf0ff; --muted:#a7b2d6; --stroke:rgba(255,255,255,.12);
+  --bg:#0b1220;
+  --card:#101a33;
+  --text:#eaf0ff;
+  --muted:#a7b2d6;
+  --stroke:rgba(255,255,255,.12);
   --radius:18px;
 }
 
 *{box-sizing:border-box}
+
 body{
-  margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
-  background: radial-gradient(1200px 600px at 20% 0%, rgba(80,120,255,.18), transparent 60%),
-              radial-gradient(900px 500px at 90% 10%, rgba(255,170,80,.14), transparent 60%),
-              var(--bg);
+  margin:0;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
+  background:
+    radial-gradient(1200px 600px at 20% 0%, rgba(80,120,255,.18), transparent 60%),
+    radial-gradient(900px 500px at 90% 10%, rgba(255,170,80,.14), transparent 60%),
+    var(--bg);
   color:var(--text);
 }
 
-.top{padding:28px 18px; text-align:center}
-.top h1{margin:0 0 6px; font-size:clamp(26px,4vw,44px)}
-.top p{margin:0; color:var(--muted)}
+.top{
+  padding:28px 18px;
+  text-align:center;
+}
 
-.wrap{max-width:1100px; margin:0 auto; padding:0 16px 48px}
+.top h1{
+  margin:0 0 6px;
+  font-size:clamp(26px,4vw,44px);
+}
 
+.top p{
+  margin:0;
+  color:var(--muted);
+}
+
+.wrap{
+  max-width:1100px;
+  margin:0 auto;
+  padding:0 16px 48px;
+}
+
+/* ---------- Buttons (global) ---------- */
+.btn{
+  background:rgba(255,255,255,.08);
+  color:var(--text);
+  border:1px solid var(--stroke);
+  border-radius:14px;
+  padding:10px 12px;
+  cursor:pointer;
+  text-decoration:none;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+}
+.btn.primary{
+  background:rgba(80,120,255,.22);
+  border-color:rgba(80,120,255,.35);
+}
+
+/* ---------- Accueil voyages ---------- */
+.trips{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));
+  gap:16px;
+  margin-top:16px;
+}
+
+.trip{
+  border:1px solid var(--stroke);
+  background:rgba(16,26,51,.7);
+  border-radius:var(--radius);
+  overflow:hidden;
+  cursor:pointer;
+  transition:transform .15s ease, background .15s ease;
+}
+
+.trip:hover{
+  transform:translateY(-2px);
+  background:rgba(16,26,51,.85);
+}
+
+.trip img{
+  width:100%;
+  height:190px;
+  object-fit:cover;
+  display:block;
+}
+
+.trip .info{
+  padding:12px 14px 14px;
+}
+
+.trip h3{
+  margin:0 0 6px;
+  font-size:18px;
+}
+
+.trip p{
+  margin:0;
+  color:var(--muted);
+  font-size:13px;
+}
+
+/* ---------- Header album (ligne) ---------- */
+.top-row{
+  max-width:1100px;
+  margin:0 auto;
+  padding:0 16px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+
+.top-title{
+  flex:1;
+  text-align:center;
+}
+
+/* ---------- Toolbar ---------- */
 .toolbar{
-  display:flex; gap:12px; flex-wrap:wrap;
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
   background:rgba(16,26,51,.7);
   border:1px solid var(--stroke);
   border-radius:var(--radius);
@@ -28,7 +131,8 @@ body{
 }
 
 .toolbar input, .toolbar select{
-  flex:1; min-width:220px;
+  flex:1;
+  min-width:220px;
   background:rgba(255,255,255,.06);
   color:var(--text);
   border:1px solid var(--stroke);
@@ -36,8 +140,12 @@ body{
   padding:12px 14px;
   outline:none;
 }
-.toolbar select{flex:0.7}
 
+.toolbar select{
+  flex:0.7;
+}
+
+/* ---------- Grid photos ---------- */
 .grid{
   margin-top:16px;
   display:grid;
@@ -54,17 +162,28 @@ body{
   cursor:pointer;
   transform:translateZ(0);
 }
+
 .card img{
-  width:100%; height:220px; object-fit:cover;
+  width:100%;
+  height:220px;
+  object-fit:cover;
   display:block;
   transition:transform .25s ease;
 }
-.card:hover img{transform:scale(1.04)}
+
+.card:hover img{
+  transform:scale(1.04);
+}
 
 .badges{
-  position:absolute; left:10px; top:10px;
-  display:flex; gap:6px; flex-wrap:wrap;
+  position:absolute;
+  left:10px;
+  top:10px;
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
 }
+
 .badge{
   font-size:12px;
   padding:6px 10px;
@@ -79,46 +198,94 @@ body{
   font-size:13px;
 }
 
-/* Lightbox */
+/* ---------- Lightbox ---------- */
 .lightbox{
-  position:fixed; inset:0;
+  position:fixed;
+  inset:0;
   display:none;
-  align-items:center; justify-content:center;
+  align-items:center;
+  justify-content:center;
   background:rgba(0,0,0,.72);
   backdrop-filter: blur(6px);
   z-index:999;
 }
-.lightbox.open{display:flex}
+
+.lightbox.open{
+  display:flex;
+}
 
 .lb-figure{
   margin:0;
   max-width:min(92vw, 980px);
   max-height:86vh;
-  display:flex; flex-direction:column; gap:10px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
   align-items:center;
 }
+
 #lbImg{
   max-width:100%;
-  max-height:78vh;
+  max-height:72vh;
   border-radius:18px;
   border:1px solid rgba(255,255,255,.18);
 }
-#lbCap{color:rgba(255,255,255,.85); text-align:center}
 
+#lbCap{
+  color:rgba(255,255,255,.85);
+  text-align:center;
+}
+
+/* Controls diaporama */
+.lb-controls{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  justify-content:center;
+  flex-wrap:wrap;
+}
+
+.speed{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  color:rgba(255,255,255,.85);
+  font-size:14px;
+}
+
+.speed select{
+  background:rgba(255,255,255,.08);
+  color:var(--text);
+  border:1px solid var(--stroke);
+  border-radius:12px;
+  padding:8px 10px;
+}
+
+/* Lightbox buttons */
 .lb-close{
-  position:fixed; top:16px; right:16px;
-  background:rgba(255,255,255,.1);
-  color:white; border:1px solid rgba(255,255,255,.2);
-  border-radius:14px; padding:10px 12px;
-  cursor:pointer;
+  position:fixed;
+  top:16px;
+  right:16px;
 }
 
 .lb-nav{
-  position:fixed; top:50%; transform:translateY(-50%);
+  position:fixed;
+  top:50%;
+  transform:translateY(-50%);
   background:rgba(255,255,255,.1);
-  color:white; border:1px solid rgba(255,255,255,.2);
-  border-radius:14px; padding:10px 14px;
-  cursor:pointer; font-size:26px;
+  color:white;
+  border:1px solid rgba(255,255,255,.2);
+  border-radius:14px;
+  padding:10px 14px;
+  cursor:pointer;
+  font-size:26px;
 }
+
 .lb-prev{left:16px}
 .lb-next{right:16px}
+.trip .info{
+  background:linear-gradient(to top, rgba(16,26,51,.95), rgba(16,26,51,.65));
+}
+.trip img{
+  filter:saturate(1.1) contrast(1.05);
+}

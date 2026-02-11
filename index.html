@@ -3,39 +3,18 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Album vacances</title>
+  <title>Mes voyages</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <header class="top">
-    <h1>Vacances ✈️</h1>
-    <p>Un petit album souvenir</p>
+    <h1>Mes voyages 🌍</h1>
+    <p>Choisis un voyage pour ouvrir l’album.</p>
   </header>
 
   <main class="wrap">
-    <section class="toolbar">
-      <input id="search" type="search" placeholder="Rechercher (ex: plage, Montréal…)" />
-      <select id="filter">
-        <option value="all">Tout</option>
-        <option value="quebec">Québec</option>
-        <option value="montreal">Montréal</option>
-        <option value="nature">Nature</option>
-      </select>
-    </section>
-
-    <section id="grid" class="grid" aria-label="Galerie photos"></section>
+    <section class="trips" id="trips"></section>
   </main>
-
-  <!-- Lightbox -->
-  <div id="lightbox" class="lightbox" aria-hidden="true">
-    <button class="lb-close" id="closeBtn" aria-label="Fermer">✕</button>
-    <button class="lb-nav lb-prev" id="prevBtn" aria-label="Photo précédente">‹</button>
-    <figure class="lb-figure">
-      <img id="lbImg" alt="" />
-      <figcaption id="lbCap"></figcaption>
-    </figure>
-    <button class="lb-nav lb-next" id="nextBtn" aria-label="Photo suivante">›</button>
-  </div>
 
   <script src="app.js"></script>
 </body>

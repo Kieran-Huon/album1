@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Album vacances</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="top">
+    <div class="top-row">
+      <a class="btn" href="index.html">← Accueil</a>
+      <div class="top-title">
+        <h1 id="albumTitle">Vacances ✈️</h1>
+        <p id="albumSubtitle">Un petit album souvenir</p>
+      </div>
+      <button class="btn primary" id="slideshowBtn">▶ Diaporama</button>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="toolbar">
+      <input id="search" type="search" placeholder="Rechercher (ex: plage, Montréal…)" />
+      <select id="filter">
+        <option value="all">Tout</option>
+        <option value="quebec">Québec</option>
+        <option value="montreal">Montréal</option>
+        <option value="nature">Nature</option>
+      </select>
+    </section>
+
+    <section id="grid" class="grid" aria-label="Galerie photos"></section>
+  </main>
+
+  <!-- Lightbox -->
+  <div id="lightbox" class="lightbox" aria-hidden="true">
+    <button class="lb-close" id="closeBtn" aria-label="Fermer">✕</button>
+    <button class="lb-nav lb-prev" id="prevBtn" aria-label="Photo précédente">‹</button>
+
+    <figure class="lb-figure">
+      <img id="lbImg" alt="" />
+      <figcaption id="lbCap"></figcaption>
+      <div class="lb-controls">
+        <button class="btn" id="playPauseBtn">⏸ Pause</button>
+
+        <label class="speed">
+          Vitesse
+          <select id="speedSelect">
+            <option value="4000">4s</option>
+            <option value="2500" selected>2.5s</option>
+            <option value="1500">1.5s</option>
+          </select>
+        </label>
+
+        <button class="btn" id="fullscreenBtn">⛶ Plein écran</button>
+      </div>
+    </figure>
+
+    <button class="lb-nav lb-next" id="nextBtn" aria-label="Photo suivante">›</button>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
