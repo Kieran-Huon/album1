@@ -5,7 +5,7 @@ const trips = [
   { id: "espagne-2023", title: "Espagne 2023", subtitle: "Barcelone & plages", cover: "photos/03.jpeg" },
 ];
 
-// IMPORTANT: uniformise tes extensions (01.jpeg -> 16.jpeg)
+// IMPORTANT : uniformise tes extensions (01.jpeg -> 16.jpeg) + minuscules
 const basePhotos = [
   { src: "photos/01.jpeg", title: "Photo 01", tags: ["quebec"] },
   { src: "photos/02.jpeg", title: "Photo 02", tags: ["quebec"] },
@@ -26,14 +26,14 @@ const basePhotos = [
 ];
 
 // ---------- HELPERS ----------
-function $(sel){ return document.querySelector(sel); }
-function getParam(name){
+function $(sel) { return document.querySelector(sel); }
+function getParam(name) {
   const url = new URL(window.location.href);
   return url.searchParams.get(name);
 }
 
 // ---------- PAGE: HOME ----------
-function initHome(){
+function initHome() {
   const tripsEl = $("#trips");
   if (!tripsEl) return;
 
@@ -56,7 +56,7 @@ function initHome(){
 }
 
 // ---------- PAGE: ALBUM ----------
-function initAlbum(){
+function initAlbum() {
   const grid = $("#grid");
   if (!grid) return; // pas sur album.html
 
@@ -91,10 +91,13 @@ function initAlbum(){
   const speedSelect = $("#speedSelect");
   const fullscreenBtn = $("#fullscreenBtn");
 
+  // Export MP4 (Vercel API + ffmpeg)
+  const exportMp4Btn = $("#exportMp4Btn");
+
   let isPlaying = false;
   let timer = null;
 
-  function render(list){
+  function render(list) {
     grid.innerHTML = "";
     list.forEach((p, idx) => {
       const card = document.createElement("article");
@@ -111,9 +114,9 @@ function initAlbum(){
     });
   }
 
-  function applyFilters(){
-    const q = (search.value || "").toLowerCase().trim();
-    const f = filter.value;
+  function applyFilters() {
+    const q = (search?.value || "").toLowerCase().trim();
+    const f = filter?.value || "all";
 
     const list = photos.filter(p => {
       const matchesText = !q || p.title.toLowerCase().includes(q) || p.tags.join(" ").includes(q);
@@ -125,13 +128,13 @@ function initAlbum(){
     render(list);
   }
 
-  function showInLightbox(photo){
+  function showInLightbox(photo) {
     lbImg.src = photo.src;
     lbImg.alt = photo.title;
     lbCap.textContent = photo.title;
   }
 
-  function openLightbox(index, list){
+  function openLightbox(index, list) {
     currentIndex = index;
     showInLightbox(list[currentIndex]);
     lightbox.classList.add("open");
@@ -139,26 +142,26 @@ function initAlbum(){
     document.body.style.overflow = "hidden";
   }
 
-  function closeLightbox(){
+  function closeLightbox() {
     stopSlideshow();
     lightbox.classList.remove("open");
     lightbox.setAttribute("aria-hidden", "true");
     document.body.style.overflow = "";
   }
 
-  function prev(){
+  function prev() {
     if (!currentList.length) return;
     currentIndex = (currentIndex - 1 + currentList.length) % currentList.length;
     showInLightbox(currentList[currentIndex]);
   }
 
-  function next(){
+  function next() {
     if (!currentList.length) return;
     currentIndex = (currentIndex + 1) % currentList.length;
     showInLightbox(currentList[currentIndex]);
   }
 
-  function startSlideshow(){
+  function startSlideshow() {
     if (!currentList.length) return;
     isPlaying = true;
     if (playPauseBtn) playPauseBtn.textContent = "⏸ Pause";
@@ -167,16 +170,15 @@ function initAlbum(){
     timer = setInterval(next, delay);
   }
 
-  function stopSlideshow(){
+  function stopSlideshow() {
     isPlaying = false;
     if (playPauseBtn) playPauseBtn.textContent = "▶ Lecture";
     clearInterval(timer);
     timer = null;
   }
 
-  function toggleSlideshow(){
+  function toggleSlideshow() {
     if (!lightbox.classList.contains("open")) {
-      // ouvre la première image filtrée
       if (!currentList.length) return;
       openLightbox(0, currentList);
     }
@@ -184,46 +186,101 @@ function initAlbum(){
     else startSlideshow();
   }
 
-  async function toggleFullscreen(){
-    try{
+  async function toggleFullscreen() {
+    try {
       if (!document.fullscreenElement) {
         await lightbox.requestFullscreen();
       } else {
         await document.exitFullscreen();
       }
-    } catch(e){
+    } catch (e) {
       console.warn("Fullscreen non dispo:", e);
     }
   }
 
+  async function exportMp4() {
+    if (!currentList.length) return;
+
+    // On envoie des URLs absolues à l’API (important pour que le serveur récupère)
+    const urls = currentList.map(p => new URL(p.src, window.location.origin).toString());
+
+    const originalText = exportMp4Btn?.textContent || "⬇️ Export MP4";
+    if (exportMp4Btn) {
+      exportMp4Btn.textContent = "⏳ Génération MP4...";
+      exportMp4Btn.disabled = true;
+    }
+
+    try {
+      const res = await fetch("/api/render-video", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          images: urls,
+          secondsPerImage: 1.5,
+          width: 1280,
+          height: 720,
+          filename: `${trip.id}.mp4`
+        })
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || "Erreur API");
+      }
+
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${trip.id}.mp4`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+      // libère l'url après un moment
+      setTimeout(() => URL.revokeObjectURL(url), 2000);
+    } catch (e) {
+      alert("Erreur export MP4 : " + e.message);
+      console.error(e);
+    } finally {
+      if (exportMp4Btn) {
+        exportMp4Btn.textContent = originalText;
+        exportMp4Btn.disabled = false;
+      }
+    }
+  }
+
   // events
-  search.addEventListener("input", applyFilters);
-  filter.addEventListener("change", applyFilters);
+  search?.addEventListener("input", applyFilters);
+  filter?.addEventListener("change", applyFilters);
 
-  closeBtn.addEventListener("click", closeLightbox);
-  prevBtn.addEventListener("click", prev);
-  nextBtn.addEventListener("click", next);
+  closeBtn?.addEventListener("click", closeLightbox);
+  prevBtn?.addEventListener("click", prev);
+  nextBtn?.addEventListener("click", next);
 
-  lightbox.addEventListener("click", (e) => {
+  lightbox?.addEventListener("click", (e) => {
     if (e.target === lightbox) closeLightbox();
   });
 
   window.addEventListener("keydown", (e) => {
-    if (!lightbox.classList.contains("open")) return;
+    if (!lightbox?.classList.contains("open")) return;
     if (e.key === "Escape") closeLightbox();
     if (e.key === "ArrowLeft") prev();
     if (e.key === "ArrowRight") next();
-    if (e.key.toLowerCase() === " ") { e.preventDefault(); toggleSlideshow(); }
+    if (e.key === " ") { e.preventDefault(); toggleSlideshow(); }
   });
 
   slideshowBtn?.addEventListener("click", toggleSlideshow);
   playPauseBtn?.addEventListener("click", toggleSlideshow);
 
   speedSelect?.addEventListener("change", () => {
-    if (isPlaying) startSlideshow(); // relance avec nouveau délai
+    if (isPlaying) startSlideshow();
   });
 
   fullscreenBtn?.addEventListener("click", toggleFullscreen);
+
+  exportMp4Btn?.addEventListener("click", exportMp4);
 
   // init
   applyFilters();
